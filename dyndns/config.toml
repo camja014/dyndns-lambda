@@ -1,0 +1,6 @@
+aws_access_key_id = '<aws-key-id>'
+aws_secret_access_key = '<aws-secret-key>'
+
+[zone.i5RSCjRQXUvvCVVdJs7fK3Twj38m2hReV3bZoyKvQI76h4wC]
+domain = 'example.com'
+zone_id = '<aws-zone-id>'
