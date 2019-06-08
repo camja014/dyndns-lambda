@@ -1,1 +1,8 @@
 venv/
+.python-version
+dyndns_lambda.zip
+*.tfstate
+.terraform/
+*.tfstate.backup
+venv/
+venv

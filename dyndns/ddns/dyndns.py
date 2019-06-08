@@ -1,8 +1,8 @@
 import base64
 from ipaddress import ip_address
 
-from config import CONFIG
-from error import AuthenticationFailedError
+from config import get_config
+from utils.error import AuthenticationFailedError
 from route53 import update_records
 
 
@@ -10,9 +10,13 @@ def update(**kwargs):
     query_params = kwargs.get('query_params')
     headers = kwargs.get('headers')
     auth_token = _parse_auth(headers)
-    domain, zone_id = _auth(auth_token)
+    config = _auth(auth_token)
     updates = _get_host_updates(query_params)
-    changed = update_records(updates, zone_id, domain)
+
+    zone_id = config['ZoneID']
+    domain = config['Domain']
+    ttl = int(config.get('TTL', 60))
+    changed = update_records(updates, zone_id, domain, ttl=ttl)
 
     if changed:
         body = 'good'
@@ -26,12 +30,10 @@ def update(**kwargs):
 
 
 def _auth(auth_token):
-    try:
-        zone_id = CONFIG['zone'][auth_token]['zone_id']
-        domain = CONFIG['zone'][auth_token]['domain']
-    except KeyError:
+    config = get_config(auth_token)
+    if not config:
         raise AuthenticationFailedError('bad')
-    return domain, zone_id
+    return config
 
 
 def _get_host_updates(query_params):
